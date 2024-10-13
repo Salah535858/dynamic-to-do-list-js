@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // Create a new button for removing the task
         const removeBtn = document.createElement('button');
         removeBtn.textContent = 'Remove';  // Set button text
-        removeBtn.className = 'remove-btn'; // Add class for styling
+        removeBtn.classList.add('remove-btn'); // Add class for styling
 
         // Assign an onclick event to the remove button
         removeBtn.onclick = function () {
@@ -34,6 +34,9 @@ document.addEventListener('DOMContentLoaded', function () {
         // Append the remove button to the li element, then append the li to taskList
         listItem.appendChild(removeBtn);
         taskList.appendChild(listItem);
+
+        // Optionally, add a class to the list item for styling (e.g., task class)
+        listItem.classList.add('task-item'); // Add a class for the list item
 
         // Clear the task input field
         taskInput.value = '';
