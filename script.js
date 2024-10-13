@@ -5,54 +5,73 @@ document.addEventListener('DOMContentLoaded', function () {
     const taskInput = document.getElementById('task-input');   // Select the input field for tasks
     const taskList = document.getElementById('task-list');     // Select the unordered list for tasks
 
-    // Step 3: Create the addTask Function
-    function addTask() {
-        // Step 4: Retrieve and trim the value from the input field
-        const taskText = taskInput.value.trim();
+    // Initialize an empty array for tasks
+    let tasks = [];
 
-        // Check if taskText is not empty
-        if (taskText === '') {
+    // Step 3: Load Tasks from Local Storage
+    function loadTasks() {
+        const storedTasks = JSON.parse(localStorage.getItem('tasks') || '[]'); // Get tasks from Local Storage
+        storedTasks.forEach(taskText => addTask(taskText, false)); // Add each task to the list
+    }
+
+    // Step 4: Create the addTask Function
+    function addTask(taskText, save = true) {
+        // Task creation logic remains the same
+        const trimmedTaskText = taskText.trim(); // Trim the task text
+
+        // Check if trimmedTaskText is not empty
+        if (trimmedTaskText === '') {
             alert('Please enter a task.'); // Prompt user to enter a task
             return; // Exit the function if input is empty
         }
 
-        // Step 5: Task Creation and Removal
         // Create a new li element
         const listItem = document.createElement('li');
-        listItem.textContent = taskText; // Set text content to the task
+        listItem.textContent = trimmedTaskText; // Set text content to the task
 
         // Create a new button for removing the task
         const removeBtn = document.createElement('button');
-        removeBtn.textContent = 'Remove';  // Set button text
+        removeBtn.textContent = 'Remove'; // Set button text
         removeBtn.classList.add('remove-btn'); // Add class for styling
 
         // Assign an onclick event to the remove button
         removeBtn.onclick = function () {
-            taskList.removeChild(listItem); // Remove the li element from taskList
+            // Remove the li element from taskList
+            taskList.removeChild(listItem);
+            // Remove from the tasks array
+            tasks = tasks.filter(task => task !== trimmedTaskText);
+            // Update Local Storage
+            localStorage.setItem('tasks', JSON.stringify(tasks));
         };
 
         // Append the remove button to the li element, then append the li to taskList
         listItem.appendChild(removeBtn);
         taskList.appendChild(listItem);
 
-        // Optionally, add a class to the list item for styling (e.g., task class)
+        // Optionally, add a class to the list item for styling
         listItem.classList.add('task-item'); // Add a class for the list item
+
+        // Update tasks array and save to Local Storage
+        if (save) {
+            tasks.push(trimmedTaskText); // Add to tasks array
+            localStorage.setItem('tasks', JSON.stringify(tasks)); // Save to Local Storage
+        }
 
         // Clear the task input field
         taskInput.value = '';
     }
 
-    // Step 6: Attach Event Listeners
+    // Step 5: Attach Event Listeners
     // Add an event listener to addButton
-    addButton.addEventListener('click', addTask);
+    addButton.addEventListener('click', () => addTask(taskInput.value));
 
     // Add an event listener for the 'keypress' event to allow Enter key for adding tasks
     taskInput.addEventListener('keypress', function (event) {
         if (event.key === 'Enter') { // Check if the pressed key is "Enter"
-            addTask(); // Call addTask if Enter is pressed
+            addTask(taskInput.value); // Call addTask if Enter is pressed
         }
     });
 
-    // Step 7: Invoke the addTask function on DOMContentLoaded
-    // This step ensures any initialization logic could be added here if necessary
+    // Step 6: Load tasks on page load
+    loadTasks(); // Load tasks from Local Storage when the page loads
 });
